@@ -1,0 +1,43 @@
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: pumba
+spec:
+  template:
+    metadata:
+      labels:
+        app: pumba
+        com.gaiaadm.pumba: "true"
+      name: pumba
+    spec:
+      containers:
+        -
+          args:
+            - "--random"
+            - "--interval"
+            - 3m
+            - kill
+            - "--signal"
+            - SIGKILL
+          image: "gaiaadm/pumba:master"
+          imagePullPolicy: Always
+          name: pumba
+          resources:
+            limits:
+              cpu: 100m
+              memory: 20M
+            requests:
+              cpu: 10m
+              memory: 5M
+          volumeMounts:
+            -
+              mountPath: /var/run/docker.sock
+              name: dockersocket
+      nodeSelector:
+        node-role.kubernetes.io/worker: "true"
+      volumes:
+        -
+          hostPath:
+            path: /var/run/docker.sock
+          name: dockersocket
