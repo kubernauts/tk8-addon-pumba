@@ -1,49 +1,70 @@
-# TK8 CLi example Addon for developer
+# TK8 addon - Pumba
 
-## Getting Started
+### What are TK8 addons?
 
-These instructions will get you all information you need to create your own tk8 addons on top of your kubernetes cluster
+- TK8 add-ons provide freedom of choice for the user to deploy tools and applications without being tied to any customized formats of deployment.
+- Simplified deployment process via CLI (will also be available via TK8 web in future).
+- With the TK8 add-ons platform, you can also build your own add-ons.
 
-### Prerequisites
+## What is Pumba?
 
-This addon was created for the tk8 cli you could find it here: https://github.com/kubernauts/tk8
-Addon integration is supported on Version 0.5.0 and greater
+Pumba is a tool by which we can perform Chaos Engineering experiments in containerized environments. Pumba is inspired by highly popular [Netflix Chaos Monkey](https://github.com/Netflix/SimianArmy/wiki/Chaos-Monkey) resilience testing tool for AWS cloud. Pumba takes a similar approach but applies it at the container level. It connects to the Docker daemon running on some machine (local or remote) and brings a level of chaos to it: “randomly” killing, stopping, and removing running containers.
 
-Alternative you can apply the main.yml directly with kubectl
+## Prerequisites:
 
-## Development
+A Kubernetes cluster
 
-Create your own addons for TK8 is easy as well.
+## Get Started:
 
-```bash
-./tk8 addon create my-addon
+You can install Pumba on the Kubernetes cluster via TK8 addons functionality.
+
+What do you need:
+- tk8 binary
+
+## Deploy Pumba on your Kubernetes Cluster:
+
+Run:
+```
+$ tk8 addon install pumba
+Search local for pumba
+check if provided a url
+Search addon on kubernauts space.
+Cloning into 'pumba'...
+Install pumba
+apply pumba/main.yml
+daemonset.extensions/pumba created
+pumba installation complete
+```
+This command clones the https://github.com/kubernauts/tk8-addon-pumba repository locally and deploys Pumba as a daemonset.
+
+## Test your Deployment:
+
+For testing your deployment, simply list the pods which the daemonset has created. If all of them are in a Running state, then we've successfully initiated a chaos experiment.
+```
+$ kubectl get pods
+NAME                                                              READY   STATUS      RESTARTS   AGE
+pumba-g78f2                                                       1/1     Running     0          87s
+pumba-mdslt                                                       1/1     Running     0          87s
+pumba-qqxsv                                                       1/1     Running     0          87s
+pumba-sbkxk                                                       1/1     Running     0          87s
+pumba-xg84s                                                       1/1     Running     0          87s
 ```
 
-Then you can provide the main.yml with your addon components.
-Also it is possible to add a main.sh file wich runs before the main.yml is applyed to the cluster. So you can do some more stuff or generate a main.yml from subfolder yaml files.
+## Chaos Testing:
 
-To get more support join us on [Slack](https://kubernauts-slack-join.herokuapp.com)
+The default deployment of Pumba starts chaos by randomly killing pods by sending a SIGKILL signal. However, this is trivial. For more sophisticated experiments like network delay, visit - https://github.com/alexei-led/pumba
+**Note:** This project is quite young. So, things might be changing/breaking a bit.
 
-## Contributing
+## Uninstall Pumba:
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/kubernauts/tk8/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the Apache License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+For removing Pumba from your cluster, we can use TK8 addon's destroy functionality. Run:
+```
+$ tk8 addon destroy pumba
+Search local for pumba
+Addon pumba already exist
+Found pumba local.
+Destroying pumba
+delete pumba from cluster
+daemonset.extensions "pumba" deleted
+pumba destroy complete
+```
